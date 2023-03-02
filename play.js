@@ -56,10 +56,46 @@
 
 // server.listen(4000)
 
+
+// Based on the url the user hits , I want you to return custom responses.
+// When url = /home , return response ==> Welcome home
+// When url = /about, return response ==> Welcome to About Us page
+// When url =/node, return response ==> Welcome to my Node Js project
+
 const http = require('http');
 
 const server = http.createServer((req,res)=>{
-    console.log("satish")
+    const url = req.url;
+    if (url === '/home'){
+        res.setHeader('Content-Type','text/html')
+        res.write('<html>')
+        res.write('<head><title> welcome home</title><head>')
+        res.write('<body><h1>Hello fron Node.js Server!,welcome home</h1></body>')
+        res.write('</html>')
+        return res.end()
+    }
+    if (url === '/about'){
+        res.setHeader('Content-Type','text/html')
+        res.write('<html>')
+        res.write('<head><title> welcome to about us page</title><head>')
+        res.write('<body><h1>Hello fron Node.js Server!,welcome to about us page</h1></body>')
+        res.write('</html>')
+        return res.end()
+    }
+    if (url === '/node'){
+        res.setHeader('Content-Type','text/html')
+        res.write('<html>')
+        res.write('<head><title> welcome to my node js project </title><head>')
+        res.write('<body><h1>Hello fron Node.js Server!,welcome to my node js project</h1></body>')
+        res.write('</html>')
+        return res.end()
+    }
+    res.setHeader('Content-Type','text/html')
+    res.write('<html>')
+    res.write('<head><title> my first page</title><head>')
+    res.write('<body><h1>Hello fron Node.js Server!</h1></body>')
+    res.write('</html>')
+    res.end()
 });
 
 server.listen(4000)
