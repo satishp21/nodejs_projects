@@ -1,101 +1,106 @@
-// console.log("Hello World")
+// const fs = require('fs')
+// const path = require("path")
 
-//Write an arrow function which returns the product of two numbers
-// const product = (a,b)=> {
-//   return a*b
+// const requestHandler = (req,res) => {
+//     const url = req.url;
+//     const method= req.method;
+//     const body=[];
+     
+//     if (url === '/'){
+//         const filepath = path.join(__dirname,"message.txt")
+//         fs.readFile(filepath,{encoding:'utf-8'}, (err,data) =>{
+//             if (err){
+//                 console.log(err);
+//             }
+//             console.log(`data from file` + data);
+//             res.write('<html>') 
+//             res.write('<head><title>Enter message</title></head>')
+//             res.write(`<body>${data}</body>`)
+//             res.write(
+//                 `<body><form action ="/message" method="POST"><input type ="text" name="message" /><button  type="submit">Send</button></form></body>`
+//                 )
+//             res.write('</html>')
+//             return res.end()
+//         });
+
+//     } else if (url === '/message' && method === "POST"){
+//         req.on("data",(chunk)=>{
+//             body.push(chunk)
+//         }); 
+
+//         return req.on("end", () => {
+//             const parsedbody= Buffer.concat(body).toString()
+//             console.log('parsedbody>>>>', parsedbody)
+//             const message = parsedbody.split("=")[1];
+//             fs.writeFile('message.txt',message,(err)=>{
+//                 if (err){
+//                     console.log(err)
+//                 }
+//                 console.log(`indise fs.writefile`)
+//                 res.statusCode = 302;
+//                 res.setHeader('Location','/')
+//                 return res.end()
+//             });
+//         });
+//     }
+//     res.setHeader('Content-Type','text/html')
+//     res.write('<html>')
+//     res.write('<head><title> my first page</title></head>')
+//     res.write('<body><h1>Hello fron Node.js Server!</h1></body>')
+//     res.write('</html>')
+//     res.end()
 // }
-// console.log(product(5,2))
+// module.exports = requestHandler;
 
-
-
-
-
-//create a student object
-// const student = {
-//   name : "satish panchal",
-//   qualification : "BE",
-//   cgpa : 8,
-//   greet() {
-//     console.log("hi my name is " + this.name)
-//   }
-// }
-// student.greet()
-
-// Take an array = ['apple', 'oranges' , ' ', 'mango', ' ' , 'lemon]. Transform it into ['apple', 'oranges' , 'empty string', 'mango', 'empty string', 'lemon] using array maps
-
-
-
-// const array = ['apple', 'oranges' , ' ', 'mango', ' ' , 'lemon']
-// console.log(array.map((val) => {
-//   if (val==" "){
-//     return "empty string"
-//   }
-//   else{
-//     return val
-//   }
-// }))//output [ 'apple', 'oranges', 'empty string', 'mango', 'empty string', 'lemon' ]
-
-//spread operator
-// const  array = ['apple','oranges','mango','lemon']
-// const array2=[...array]
-// array2.push("satish")
-// console.log(array2)
-// console.log(array)
-
-// //rest operator
-
-// const toArray = (...args)=>{
-//   return args
-// }
-// console.log(toArray(1,2,3,4))
-//below will print req data on terminal when we acces localhost:4000 on browser
-// const http = require('http');
-// const server = http.createServer((req,res)=>{
-//     console.log(req)
-// });
-
-// server.listen(4000)
-
-
-// Based on the url the user hits , I want you to return custom responses.
-// When url = /home , return response ==> Welcome home
-// When url = /about, return response ==> Welcome to About Us page
-// When url =/node, return response ==> Welcome to my Node Js project
-
+//udemycode
 const http = require('http');
+const fs = require("fs")
+const path = require("path")
 
 const server = http.createServer((req,res)=>{
     const url = req.url;
-    if (url === '/home'){
-        res.setHeader('Content-Type','text/html')
-        res.write('<html>')
-        res.write('<head><title> welcome home</title><head>')
-        res.write('<body><h1>Hello fron Node.js Server!,welcome home</h1></body>')
-        res.write('</html>')
-        return res.end()
+    const method = req.method
+    if (url === '/'){
+        // res.setHeader('Content-Type','text/html')
+        const filepath = path.join(__dirname,"message.txt")
+        fs.readFile(filepath,{encoding:'utf-8'}, (err,data) =>{
+            if (err){
+                console.log(err);
+            }
+            console.log(`data from file` + data);
+            res.write('<html>')
+            res.write('<head><title> Enter message </title></head>')
+            res.write(`<body><h1>${data}</h1></body>`)
+            res.write(`<body><form action ="/message" method="POST"><input type ="text" name="message" /><button  type="submit">Send</button></form></body>`)
+            res.write('</html>')
+            return res.end()
+        })
     }
-    if (url === '/about'){
-        res.setHeader('Content-Type','text/html')
-        res.write('<html>')
-        res.write('<head><title> welcome to about us page</title><head>')
-        res.write('<body><h1>Hello fron Node.js Server!,welcome to about us page</h1></body>')
-        res.write('</html>')
-        return res.end()
+    if (url === '/message' && method === "POST"){
+        // res.setHeader('Content-Type','text/html')
+        const body = []
+        req.on('data',(chunk) => {
+            console.log(chunk);
+            body.push(chunk)
+        });
+        return req.on("end", () =>{
+            const parsedBody=Buffer.concat(body).toString();
+            // console.log(parsedBody)
+            const message = parsedBody.split("=")[1];
+            fs.writeFileSync("message.txt", message)
+            res.statusCode = 302;
+            res.setHeader('Location','/')
+            return res.end()
+        })
+
     }
-    if (url === '/node'){
-        res.setHeader('Content-Type','text/html')
-        res.write('<html>')
-        res.write('<head><title> welcome to my node js project </title><head>')
-        res.write('<body><h1>Hello fron Node.js Server!,welcome to my node js project</h1></body>')
-        res.write('</html>')
-        return res.end()
-    }
-    res.setHeader('Content-Type','text/html')
-    res.write('<html>')
-    res.write('<head><title> my first page</title><head>')
-    res.write('<body><h1>Hello fron Node.js Server!</h1></body>')
-    res.write('</html>')
-    res.end()
+
+    // res.setHeader('Content-Type','text/html')
+    // res.write('<html>')
+    // res.write('<head><title> my first page</title><head>')
+    // res.write('<body><h1>Hello fron Node.js Server!</h1></body>')
+    // res.write('</html>')
+    // res.end()
 });
 
-server.listen(4000)
+server.listen(3000)
