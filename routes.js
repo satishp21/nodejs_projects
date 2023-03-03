@@ -40,5 +40,8 @@ const requestHandler = (req,res)=> {
 
 }
 
-module.exports = requestHandler;
-
+// module.exports = requestHandler; //1st method to route
+module.exports = {
+    handler : requestHandler,
+    someText : 'some hard coded text'
+}
