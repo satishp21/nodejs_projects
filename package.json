@@ -1,0 +1,24 @@
+{
+  "name": "node_complete_guide",
+  "version": "1.0.0",
+  "description": "",
+  "main": "play.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon play.js",
+    "start-server": "node play.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/satishp21/node_complete_guide.git"
+  },
+  "author": "satish panchal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/satishp21/node_complete_guide/issues"
+  },
+  "homepage": "https://github.com/satishp21/node_complete_guide#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

@@ -19,6 +19,7 @@ const requestHandler = (req,res)=> {
             return res.end()
         })
     }
+
     if (url === '/message' && method === "POST"){
         // res.setHeader('Content-Type','text/html')
         const body = []
@@ -26,6 +27,7 @@ const requestHandler = (req,res)=> {
             console.log(chunk);
             body.push(chunk)
         });
+        
         return req.on("end", () =>{
             const parsedBody=Buffer.concat(body).toString();
             // console.log(parsedBody)
@@ -35,7 +37,6 @@ const requestHandler = (req,res)=> {
             res.setHeader('Location','/')
             return res.end()
         })
-    
     }
 
 }
