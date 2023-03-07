@@ -5,8 +5,8 @@
   "main": "play.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon play.js",
-    "start-server": "node play.js"
+    "start": "nodemon chatapp.js",
+    "start-server": "node chatapp.js"
   },
   "repository": {
     "type": "git",
