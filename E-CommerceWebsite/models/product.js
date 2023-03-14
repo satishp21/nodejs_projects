@@ -14,7 +14,7 @@ const Product = sequelize.define('product',{
     type :Sequelize.DOUBLE,
     allowNull : false
   },
-  imageURL:{
+  imageUrl:{
     type:Sequelize.STRING,
     allowNull: false
   },
@@ -24,4 +24,4 @@ const Product = sequelize.define('product',{
   },
 })
 
-module.export = Product;
+module.exports = Product;

@@ -1,0 +1,6 @@
+{
+    "recommendations": [
+        "kvcvc.sequelize-snippets",
+        "mtxr.sqltools-driver-mysql"
+    ]
+}
