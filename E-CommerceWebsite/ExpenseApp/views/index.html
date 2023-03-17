@@ -1,0 +1,61 @@
+<!DOCTYPE html >
+<html lang="en">
+<head>
+</head>
+<body>
+    <form action="/add-expense" method="post" id="my-form">
+        <label>Expense amount</label>
+        <input type ="number" name="amount" id ="expenseInputTag" required>
+        <label>Description</label>
+        <input type ="text" name="description" id="DescriptionInputTag" required>
+        <!-- <label>Category</label>
+        <input type ="text" name="category" id="catagoryInputTag" required> -->
+        <!-- <label>Category</label> -->
+        <select name="category" id ="CatagoryInputTag" >
+            <option value="Fuel">Fuel</option>
+            <option value="Food">Food</option>
+            <option value="Electricity">Electricity</option>
+            <option value="movie">movie</option>
+        </select> 
+        <input type="submit" name ="submit" value="Add expense">
+        <!-- <ol id ="listofitems">
+        </ol> -->
+    </form>
+    <ul id="listofitems"></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+
+    <script>
+        async function getexpense(){
+            const expenses = await axios.get('http://localhost:3000/get-expense');
+            // console.log(users);
+            const parentNode = document.getElementById('listofitems');
+            expenses.data.forEach(expense => {
+              const childHTML=`<li id=${expense.id}> ${expense.amount} : ${expense.description} : ${expense.category}
+                <form action="/delete-expense" method="POST">
+                  <input type="hidden" value=${expense.id} name="expenseId">
+                  <button onclick=deleleexpense(${expense.id}) type="submit">Delete</button>
+                </form>
+                <form action="/edit-expense" method="POST">
+                    <input type="hidden" value=${expense.id} name="expenseId">
+                    <button onclick=editexpense(${expense.id}) type="submit">Edit</button>
+                </form>
+
+              </li>`;
+              parentNode.innerHTML = parentNode.innerHTML + childHTML;
+            });
+          }
+
+        async function editexpense(expenseId){
+            const expense = await axios.post(`http://localhost:3000/edit-expense`);
+        }
+
+        async function deleteexpense(expenseId){
+            const expense = await axios.post(`http://localhost:3000/delete-expense`);
+            getexpense();
+        }
+        getexpense()
+        
+    </script>
+</body>
+</html>

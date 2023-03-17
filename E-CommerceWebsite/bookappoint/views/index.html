@@ -21,7 +21,7 @@
               </div>
               <input class="btn" type="submit" value="Submit">
             </form>
-      
+
             <ul id="users"></ul>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
            <script> 
@@ -44,9 +44,9 @@
               const users = await axios.post(`http://localhost:3000/delete-user`);
               getUsers();
             }
-
+            
             getUsers();
-         
+
     </script>
     </body>
 </html>
