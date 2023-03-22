@@ -46,7 +46,7 @@ exports.reducequntity1 = (req,res,next) => {
   console.log(itemId);
   Item.findByPk(itemId)
   .then(item => {
-    item.Update(
+    item.update(
       {
       Quantity: item.Quantity = item.Quantity-1
       }
@@ -66,10 +66,16 @@ exports.reducequntity2 = (req,res,next) => {
   console.log(itemId);
   Item.findByPk(itemId)
   .then(item => {
-      return item.destroy();
+    item.update(
+      {
+      Quantity: item.Quantity = item.Quantity-2
+      }
+    )
+    // item.Quantity = item.Quantity-1;
+    console.log(item.Quantity)
   })
   .then(result => {
-      console.log('DELETED ITEM');
+      console.log('reduced 1 ITEM');
       res.redirect('/');
     })
   .catch(err => { console.log(err) });
