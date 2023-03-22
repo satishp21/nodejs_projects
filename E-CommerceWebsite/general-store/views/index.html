@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>App</title>
+    </head>
+    <body>
+            <h1>General Store</h1>
+            <form action="/insert-item" method="post">
+              <div class="msg"></div>
+              <!-- <div> -->
+                <label>Item Name:</label>
+                <input type="text" id="ItemName" name="ItemName">
+              <!-- </div> -->
+              <!-- <div> -->
+                <label>Description:</label>
+                <input type="text" id="Description" name="Description">
+              <!-- </div> -->
+              <!-- <div> -->
+                <label>Price:</label>
+                <input type="number" id="Price" name="Price">
+              <!-- </div> -->
+              <!-- <div> -->
+                <label>Quantity:</label>
+                <input type="number" id="Quantity" name="Quantity">
+              <!-- </div> -->
+              <input class="btn" type="submit" value="Add Item">
+            </form>
+
+            <ul id="items"></ul>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+           <script> 
+            async function getItems(){
+              const items = await axios.get('http://localhost:3000/get-items');
+              // console.log(users);
+              const parentNode = document.getElementById('items');
+              items.data.forEach(item => {
+                const childHTML=`<li id=${item.id}> ${item.ItemName} : ${item.Description} : ${item.Price}
+                  : ${item.Quantity}
+                  <form action="/buy-1" method="POST">
+                    <input type="hidden" value=${item.id} name="itemId">
+                    <button onclick=deleteUser(${item.id}) type="submit">buy-1</button>
+                  </form>
+                  <form action="/buy-2" method="POST">
+                    <input type="hidden" value=${item.id} name="itemId">
+                    <button onclick=deleteUser(${item.id}) type="submit">buy-2</button>
+                  </form>
+                  <form action="/delete-item" method="POST">
+                    <input type="hidden" value=${item.id} name="itemId">
+                    <button onclick=deleteUser(${item.id}) type="submit">Delete</button>
+                  </form>
+                </li>`;
+                parentNode.innerHTML = parentNode.innerHTML + childHTML;
+              });
+            }
+
+            async function deleteItem(itemId){
+              const items = await axios.post(`http://localhost:3000/delete-user`);
+              getItems();
+            }
+            
+            getItems();
+
+    </script>
+    </body>
+</html>
