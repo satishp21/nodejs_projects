@@ -1,5 +1,15 @@
 const Expense = require('../models/user');
 
+exports.signup = (req,res,next) => {
+  const name = req.body.name;
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if((!name) || (!email) || (!password)){
+    return res.write('<h1> please enter in all the fields<h1/>')
+  }
+}
+
 exports.getexpense = (req,res,next) => {
 Expense.findAll()
   .then((expenses) =>{
