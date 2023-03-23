@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(userRoutes);
 
 app.get('/',(req,res) => {
-    res.sendFile(path.join(rootDir, 'views', 'index.html'));
+    res.sendFile(path.join(rootDir, 'views', 'signup.html'));
 })
 
 sequelize
