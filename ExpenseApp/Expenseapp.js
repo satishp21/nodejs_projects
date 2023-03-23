@@ -17,6 +17,10 @@ app.get('/',(req,res) => {
     res.sendFile(path.join(rootDir, 'views', 'signup.html'));
 })
 
+app.get('/user/login',(req,res) => {
+    res.sendFile(path.join(rootDir, 'views', 'login.html'));
+})
+
 sequelize
 .sync()
 .then(result => {

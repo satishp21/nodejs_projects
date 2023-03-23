@@ -3,6 +3,7 @@ const router = express.Router();
 const userControlls = require('../controllers/userControls');
 
 router.post('/user/signup', userControlls.signup)
+router.post('/user/successlogin', userControlls.login)
 
 // router.post('/add-expense', userControlls.addExpense);
 // router.get('/get-expense', userControlls.getexpense);

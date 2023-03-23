@@ -7,18 +7,52 @@ exports.signup = (req,res,next) => {
   const password = req.body.password;
 
   if((!name) || (!email) || (!password)){
-    return res.write('<h1> please enter in all the fields<h1/>')
+    return res.status(400).json('please enter all thegiven field')
   }
   User.create({
     name: name,
     email: email,
     password: password
   })
+  // .then(result => {
+  //   res.status(201).json({message:"succesfully created new user "})
+  // }) 
   .then(result => {
-    // console.log(result);
-    res.redirect('/');
+    res.redirect('/user/login');
   })
-  .catch(err => {res.send(`<p>${err}</p>`)});
+  .catch(err => {res.status(403).json(err)});
+}
+
+exports.login = async(req,res,next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if((!email) || (!password)){
+    return res.status(400).json('please enter all thegiven field')
+  }
+
+  User.findOne({where:{email:email,password:password}})
+  .then(result =>{
+    console.log(result)
+    if ((result) == null){
+      return res.send('<h1>id or password incorrect</h1>')
+    }
+    res.send('<h1>successfully logined</h1>')
+  })
+  // .catch(err=>{
+  //   res.send('<h1>id or password incorrect</h1>')
+  // })
+  // User.create({
+  //   name: name,
+  //   email: email,
+  //   password: password
+  // })
+  // .then(result => {
+  //   // console.log(result);
+  //   res.status(201).json({message:"succesfully created new user "})
+  //   res.redirect('/user/login');
+  // })
+  // .catch(err => {res.status(403).json(err)});
 }
 
 // exports.getexpense = (req,res,next) => {

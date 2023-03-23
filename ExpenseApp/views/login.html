@@ -7,6 +7,14 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>this is login page</h1>
+    <form action="/user/successlogin" method="post">
+        <label>Enter your email:</label>
+        <input type ="email" name="email" id="email" required>
+        <input type ="password" name="password" id="password" required> 
+        <input type="submit" name ="submit" value="Login">
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script>
+    </script>
 </body>
 </html>
