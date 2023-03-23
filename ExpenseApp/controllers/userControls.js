@@ -1,7 +1,9 @@
 // const Expense = require('../models/expense');
 const User = require('../models/user');
+const bcrypt = require('bcrypt')
 
-exports.signup = (req,res,next) => {
+exports.signup = async(req,res,next) => {
+  try{
   const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
@@ -9,21 +11,29 @@ exports.signup = (req,res,next) => {
   if((!name) || (!email) || (!password)){
     return res.status(400).json('please enter all thegiven field')
   }
-  User.create({
-    name: name,
-    email: email,
-    password: password
+  const saltrounds = 10
+  bcrypt.hash(password,saltrounds,async(err,hash)=>{
+    console.log(err)
+    await User.create({
+      name: name,
+      email: email,
+      password: hash
+    })
+    await res.status(201).json({message:"successfully created new user"})
   })
   // .then(result => {
   //   res.status(201).json({message:"succesfully created new user "})
   // }) 
-  .then(result => {
-    res.redirect('/user/login');
-  })
-  .catch(err => {res.status(403).json(err)});
+  // .then(result => {
+  //   res.redirect('/user/login');
+  // })
+
+  }catch(err) {
+    res.status(500).json(err)
+  };
 }
 
-exports.login = (req,res,next) => {
+exports.login = async(req,res,next) => {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -32,37 +42,45 @@ exports.login = (req,res,next) => {
   }
 
   // User.findOne({where:{email:email,password:password}})
-  User.findOne({where:{email:email}})
-  .then(result =>{
-    console.log(result)
-    if ((result) == null){
-      return res.status(404).send('<h1>user doesnot exist</h1>')
+  const user = await User.findAll({where:{email}})
+  // .then(result =>{
+  //   console.log(result)
+    if (user.length > 0){
+      // return res.status(404).send('<h1>user doesnot exist</h1>')
+      bcrypt.compare(password,user[0].password,(err,result2)=>{
+        if(err){
+          res.status(500).json({success:false,message:'something went wrong'})
+        }
+        if(result2 === true){
+          res.status(200).json({success:true,message:'user logged in successfully'})
+        }
+      })
     }
-    // res.send('<h1>successfully logined</h1>')
-  })
-  User.findOne({where:{password:password}})
-  .then(result =>{
-    console.log(result)
-    if ((result) == null){
-      return res.status(401).send('<h1>user not authorized</h1>')
-    }
-    res.send('<h1>successfully logined</h1>')
-  })
-  .catch(err=>{
-    console.log(err)
-  })
-  // User.create({
-  //   name: name,
-  //   email: email,
-  //   password: password
-  // })
-  // .then(result => {
-  //   // console.log(result);
-  //   res.status(201).json({message:"succesfully created new user "})
-  //   res.redirect('/user/login');
-  // })
-  // .catch(err => {res.status(403).json(err)});
 }
+  // })
+  // User.findOne({where:{password:password}})
+  // .then(result =>{
+  //   bcrypt.compare(password,result[0].password,(err,result2)=>{
+  //     if(err){
+  //       res.status(500).json({success:false,message:'something went wrong'})
+  //     }
+  //     if(result2 === true){
+  //       res.status(200).json({success:true,message:'user logged in successfully'})
+  //     }
+  //     else{
+  //       return res.status(400).json({success:false,message:'pass is wrong'})
+  //     }
+  //   })
+    // console.log(result)
+    // if ((result) == null){
+    //   return res.status(401).send('<h1>user not authorized</h1>')
+    // }
+    // res.send('<h1>successfully logined</h1>')
+  // })
+  // .catch(err=>{
+  //   res.status(500).send(err)
+  // })
+
 
 // exports.getexpense = (req,res,next) => {
 // Expense.findAll()
