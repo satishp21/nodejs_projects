@@ -23,7 +23,7 @@ exports.signup = (req,res,next) => {
   .catch(err => {res.status(403).json(err)});
 }
 
-exports.login = async(req,res,next) => {
+exports.login = (req,res,next) => {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -31,17 +31,26 @@ exports.login = async(req,res,next) => {
     return res.status(400).json('please enter all thegiven field')
   }
 
-  User.findOne({where:{email:email,password:password}})
+  // User.findOne({where:{email:email,password:password}})
+  User.findOne({where:{email:email}})
   .then(result =>{
     console.log(result)
     if ((result) == null){
-      return res.send('<h1>id or password incorrect</h1>')
+      return res.status(404).send('<h1>user doesnot exist</h1>')
+    }
+    // res.send('<h1>successfully logined</h1>')
+  })
+  User.findOne({where:{password:password}})
+  .then(result =>{
+    console.log(result)
+    if ((result) == null){
+      return res.status(401).send('<h1>user not authorized</h1>')
     }
     res.send('<h1>successfully logined</h1>')
   })
-  // .catch(err=>{
-  //   res.send('<h1>id or password incorrect</h1>')
-  // })
+  .catch(err=>{
+    console.log(err)
+  })
   // User.create({
   //   name: name,
   //   email: email,
