@@ -21,6 +21,10 @@ app.get('/user/login',(req,res) => {
     res.sendFile(path.join(rootDir, 'views', 'login.html'));
 })
 
+app.get('/user/successlogin/add-expense',(req,res) => {
+    res.sendFile(path.join(rootDir, 'views', 'index.html'));
+})
+
 sequelize
 .sync()
 .then(result => {

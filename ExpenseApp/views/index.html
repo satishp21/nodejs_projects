@@ -3,7 +3,7 @@
 <head>
 </head>
 <body>
-    <form action="/add-expense" method="post" id="my-form">
+    <form action="/user/successlogin/add-expense" method="post" id="my-form">
         <label>Expense amount</label>
         <input type ="number" name="amount" id ="expenseInputTag" required>
         <label>Description</label>
@@ -36,20 +36,11 @@
                   <input type="hidden" value=${expense.id} name="expenseId">
                   <button onclick=deleleexpense(${expense.id}) type="submit">Delete</button>
                 </form>
-                <form action="/edit-expense" method="POST">
-                    <input type="hidden" value=${expense.id} name="expenseId">
-                    <button onclick=editexpense(${expense.id}) type="submit">Edit</button>
-                </form>
 
               </li>`;
               parentNode.innerHTML = parentNode.innerHTML + childHTML;
             });
           }
-
-        async function editexpense(expenseId){
-            const expense = await axios.post(`http://localhost:3000/edit-expense`);
-        }
-
         async function deleteexpense(expenseId){
             const expense = await axios.post(`http://localhost:3000/delete-expense`);
             getexpense();

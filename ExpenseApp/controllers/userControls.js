@@ -1,6 +1,9 @@
-// const Expense = require('../models/expense');
+const Expense = require('../models/expense');
 const User = require('../models/user');
 const bcrypt = require('bcrypt')
+
+const path = require('path');
+const rootDir = require('../util/path');
 
 exports.signup = async(req,res,next) => {
   try{
@@ -52,6 +55,32 @@ exports.login = async(req,res,next) => {
           res.status(500).json({success:false,message:'something went wrong'})
         }
         if(result2 === true){
+          // res.status(200).json({success:true,message:'user logged in successfully'})
+          res.status(201).sendFile(path.join(rootDir, 'views', 'index.html'))
+        }
+      })
+    }
+}
+
+exports.postlogin = async(req,res,next) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if((!email) || (!password)){
+    return res.status(400).json('please enter all thegiven field')
+  }
+
+  // User.findOne({where:{email:email,password:password}})
+  const user = await User.findAll({where:{email}})
+  // .then(result =>{
+  //   console.log(result)
+    if (user.length > 0){
+      // return res.status(404).send('<h1>user doesnot exist</h1>')
+      bcrypt.compare(password,user[0].password,(err,result2)=>{
+        if(err){
+          res.status(500).json({success:false,message:'something went wrong'})
+        }
+        if(result2 === true){
           res.status(200).json({success:true,message:'user logged in successfully'})
         }
       })
@@ -82,44 +111,44 @@ exports.login = async(req,res,next) => {
   // })
 
 
-// exports.getexpense = (req,res,next) => {
-// Expense.findAll()
-//   .then((expenses) =>{
-//     res.json(expenses);
-//   })
-//   .catch(err => {console.log(err)})
-// }
+exports.getexpense = (req,res,next) => {
+Expense.findAll()
+  .then((expenses) =>{
+    res.json(expenses);
+  })
+  .catch(err => {console.log(err)})
+}
 
-// exports.addExpense = (req,res,next) => {
-//     const amount = req.body.amount;
-//     const description = req.body.description;
-//     const category = req.body.category
-//     // console.log(userName,email);
-//     Expense.create({
-//         amount: amount,
-//         description: description,
-//         category: category
-//     })
-//     .then(result => {
-//         // console.log(result);
-//         res.redirect('/');
-//     })
-//     .catch(err => { console.log(err) });
-// }
+exports.addExpense = (req,res,next) => {
+    const amount = req.body.amount;
+    const description = req.body.description;
+    const category = req.body.category
+    // console.log(userName,email);
+    Expense.create({
+        amount: amount,
+        description: description,
+        category: category
+    })
+    .then(result => {
+        // console.log(result);
+        res.redirect('/user/successlogin/add-expense');
+    })
+    .catch(err => { console.log(err) });
+}
 
-// exports.deleteexpense = (req,res,next) => {
-//   const expenseId = req.body.expenseId;
-//   console.log(expenseId);
-//   Expense.findByPk(expenseId)
-//   .then(expense => {
-//       return expense.destroy();
-//   })
-//   .then(result => {
-//       console.log('DELETED PRODUCT');
-//       res.redirect('/');
-//   })
-//   .catch(err => { console.log(err) });
-// }
+exports.deleteexpense = (req,res,next) => {
+  const expenseId = req.body.expenseId;
+  console.log(expenseId);
+  Expense.findByPk(expenseId)
+  .then(expense => {
+      return expense.destroy();
+  })
+  .then(result => {
+      console.log('DELETED PRODUCT');
+      res.redirect('/user/successlogin/add-expense');
+  })
+  .catch(err => { console.log(err) });
+}
 
 // exports.editexpense = (req,res,next) => {
 //   const editMode = req.query.edit;
