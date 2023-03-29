@@ -11,11 +11,8 @@ function addNewExpense(e){
     const token  = localStorage.getItem('token')
     axios.post('http://localhost:3000/expense/addexpense',expenseDetails,  { headers: {"Authorization" : token} })
         .then((response) => {
-
         addNewExpensetoUI(response.data.expense);
-
     }).catch(err => showError(err))
-
 }
 
 function showPremiumuserMessage() {
@@ -45,7 +42,6 @@ window.addEventListener('DOMContentLoaded', ()=> {
     axios.get('http://localhost:3000/expense/getexpenses', { headers: {"Authorization" : token} })
     .then(response => {
             response.data.expenses.forEach(expense => {
-
                 addNewExpensetoUI(expense);
             })
     }).catch(err => {
