@@ -5,7 +5,6 @@ function forgotpassword(e) {
 
     const userDetails = {
         email: form.get("email"),
-
     }
     console.log(userDetails)
     axios.post('http://localhost:3000/password/forgotpassword',userDetails).then(response => {

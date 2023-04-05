@@ -2,8 +2,6 @@ const User = require('../models/users');
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-const Sib = require('sib-api-v3-sdk')
-require('dotenv').config()
 
 function isstringinvalid(string){
     if(string == undefined ||string.length === 0){
@@ -50,7 +48,7 @@ const login = async (req, res) => {
             throw new Error('Something went wrong')
            }
             if(result === true){
-                return res.status(200).json({success: true, message: "User logged in successfully", token: generateAccessToken(user[0].id, user[0].name, user[0].ispremiumuser)})
+                res.status(200).json({success: true, message: "User logged in successfully", token: generateAccessToken(user[0].id, user[0].name, user[0].ispremiumuser)})
             }
             else{
             return res.status(400).json({success: false, message: 'Password is incorrect'})
@@ -64,42 +62,8 @@ const login = async (req, res) => {
     }
 }
 
-// const forgetpass = async (req, res) => {
-
-//     try{
-
-//     const client = Sib.ApiClient.instance
-
-//     const apiKey = client.authentications['api-key']
-//     apiKey.apiKey = process.env.API_KEY
-
-//     const  tranEmailApi = new Sib.TransactionalEmailsApi()
-
-//     const sender = {
-//         email : email
-//     }
-//     const receivers = {
-//         email : email
-//     }
-
-//     response = await tranEmailApi.sendTransactionEmail({
-//         sender,
-//         to:receivers,
-//         subject:'this mail is for your password change request',
-//         textContent :`this mail is for your password change request`
-//     })
-
-//     console.log(response)
-
-//     }catch(err){
-//         console.log(err)
-//         res.status(500).json({message: err, success: false})
-//     }
-// }
-
 module.exports = {
     signup,
     login,
     generateAccessToken
-    // forgetpass
 }

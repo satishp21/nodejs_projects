@@ -2,13 +2,13 @@ const Razorpay = require('razorpay');
 const Order = require('../models/orders')
 const userController = require('./user')
 
-
 const purchasepremium =async (req, res) => {
+    await Order.update({status:"failed"},{where:{status:"PENDING"}})
     try {
         var rzp = new Razorpay({
             key_id: process.env.RAZORPAY_KEY_ID,
             key_secret: process.env.RAZORPAY_KEY_SECRET
-        })
+        })  
         const amount = 2500;
 
         rzp.orders.create({amount, currency: "INR"}, (err, order) => {
@@ -32,18 +32,19 @@ const purchasepremium =async (req, res) => {
     try {
         const userId = req.user.id;
         const { payment_id, order_id} = req.body;
-        const order  = await Order.findOne({where : {orderid : order_id}}) //2
+        const order  = await Order.findOne({where : {orderid : order_id}})   //2
+        console.log("this is order"+order)
+
         const promise1 =  order.update({ paymentid: payment_id, status: 'SUCCESSFUL'}) 
         const promise2 =  req.user.update({ ispremiumuser: true }) 
 
         Promise.all([promise1, promise2]).then(()=> {
             return res.status(202).json({sucess: true, message: "Transaction Successful", token: userController.generateAccessToken(userId,undefined , true) });
         }).catch((error ) => {
+            console.log(error)
             throw new Error(error)
         })
 
-        
-                
     } catch (err) {
         console.log(err);
         res.status(403).json({ errpr: err, message: 'Sometghing went wrong' })

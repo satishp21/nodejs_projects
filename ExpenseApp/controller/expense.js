@@ -1,6 +1,9 @@
 const Expense = require('../models/expenses');
 const User = require('../models/users');
+const FilesDownloaded = require('../models/filesdownloaded');
 const sequelize = require('../util/database');
+const UserServices = require('../services/userservices')
+const s3Services = require('../services/s3services')
 
 const addexpense = async(req, res) => {
     const t = await sequelize.transaction()
@@ -23,7 +26,7 @@ const addexpense = async(req, res) => {
         return res.status(201).json({expense, success: true} );
     }
     catch(err) {
-        await t.rollback()
+        await t.rollback() // this will not let update database as error occured
         return res.status(500).json({success : false, error: err})
       }
 }
@@ -42,9 +45,8 @@ const getexpenses = async(req, res)=> {
 const deleteexpense = async (req, res) => {
     console.log('start')
     try{
-    const kuchbhi = req.params.expenseid;
-    const expenseid = req.params.expenseid;
-    const expenseobj  = await Expense.findAll ({where : {id : kuchbhi}})
+    const expenseid = req.params.expenseid; //this is obtained from url of delete req
+    const expenseobj  = await Expense.findAll ({where : {id : expenseid}})
     console.log(expenseobj[0].expenseamount,expenseobj[0].userId)
     const user= await User.findAll ({where : {id : expenseobj[0].userId }})
     console.log(user)
@@ -70,10 +72,44 @@ const deleteexpense = async (req, res) => {
         console.log(err)
         return res.status(500).json({success : false, error: err})
     }
-} 
+}
+
+
+
+const downloadExpenses =  async (req, res) => {
+
+    try {
+        if(!req.user.ispremiumuser){
+            return res.status(401).json({ success: false, message: 'User is not a premium User'})
+        }
+        const expenses = await UserServices.getExpenses(req)
+        console.log(expenses)
+
+        const strigifiedexpenses = JSON.stringify(expenses)
+        console.log(strigifiedexpenses)
+
+        const userId = req.user.id;
+
+        const filename = `Expense.txt${userId}/${new Date}`
+        const fileURL= await s3Services.uploadTOS3(strigifiedexpenses,filename)
+        FilesDownloaded.create({fileUrl:fileURL,userId:req.user.id})
+        
+        console.log(fileURL)
+        res.status(200).json({fileURL,success:true})
+
+
+    } catch(err) {
+        console.log(err)
+        res.status(500).json({ error: err, success: false, message: 'Something went wrong'})
+    }
+
+};
+
+
 
 module.exports = {
     deleteexpense,
     getexpenses,
-    addexpense
+    addexpense,
+    downloadExpenses
 }
