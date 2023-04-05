@@ -32,6 +32,7 @@ function parseJwt (token) {
 }
 
 window.addEventListener('DOMContentLoaded', ()=> {
+    const page = 1
     const token  = localStorage.getItem('token')
     const decodeToken = parseJwt(token)
     console.log(decodeToken)
@@ -40,12 +41,15 @@ window.addEventListener('DOMContentLoaded', ()=> {
         showPremiumuserMessage()
         showLeaderboard()
     }
-    axios.get('http://localhost:3000/expense/getexpenses', { headers: {"Authorization" : token} })
+    axios.get(`http://localhost:3000/expense/getexpenses${page}`, { headers: {"Authorization" : token} })
     .then(response => {
             response.data.expenses.forEach(expense => {
                 addNewExpensetoUI(expense);
             })
+            console.log("this is response.data",response.data)
+            showPagination(response.data)
     }).catch(err => {
+        console.log(err)
         showError(err)
     })
 });
@@ -164,4 +168,48 @@ document.getElementById('rzp-button1').onclick = async function (e) {
   rzp1.on('payment.failed', async function (response){
     alert('Something went wrong')
  });
+}
+
+function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previousPage,lastPage}){
+    let page = 1;
+    try{
+    const pagination = document.getElementById('pagination')
+    
+    pagination.innerHTML = '';
+
+    if(hasPreviousPage){
+        const button1 = document.createElement('button');
+        button1.innerHTML = previousPage ;
+        button1.addEventListener('click' , ()=>getPageExpenses(page,previousPage))
+        pagination.appendChild(button1)
+    }
+
+    const button2 = document.createElement('button');
+    button2.classList.add('active')
+    button2.innerHTML = currentPage ;
+    button2.addEventListener('click' , ()=>getPageExpenses(page,currentPage))
+    pagination.appendChild(button2)
+
+    if(hasNextPage){
+        const button3 = document.createElement('button');
+        button3.innerHTML = nextPage ;
+        button3.addEventListener('click' , ()=>getPageExpenses(page,nextPage))
+        pagination.appendChild(button3)
+    }
+    }catch(err){
+        console.log(err)
+    }
+}
+
+function getPageExpenses(page){
+    const token  = localStorage.getItem('token')
+    axios.get(`http://localhost:3000/expense/getexpenses${page}`, { headers: {"Authorization" : token} })
+    .then(response => {
+            response.data.expenses.forEach(expense => {
+                addNewExpensetoUI(expense);
+            })
+            showPagination(response.data)
+    }).catch(err => {
+        showError(err)
+    })
 }

@@ -33,8 +33,21 @@ const addexpense = async(req, res) => {
 
 const getexpenses = async(req, res)=> {
     try{
-    const expenses = await Expense.findAll({ where : { userId: req.user.id}})
-        return res.status(200).json({expenses, success: true})
+        let page = req.params.page || 1;
+        let Items_Per_Page = 3;
+        let count = await Expense.count({ userId:req.user.id })
+        let totalitems = count
+    const expenses = await Expense.findAll({ where : { userId: req.user.id}},{offset:(page-1) *Items_Per_Page,      limit:Items_Per_Page})
+        return res.status(200).json({expenses,
+            info: {
+                currentPage: page,
+                hasNextPage: totalitems > page * Items_Per_Page,
+                hasPreviousPage: page > 1,
+                nextPage: +page + 1,
+                previousPage: +page - 1,
+                lastPage: Math.ceil(totalitems / Items_Per_Page) 
+            },
+             success: true })
     }
     catch(err) {
         console.log(err)
