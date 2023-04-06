@@ -34,10 +34,15 @@ const addexpense = async(req, res) => {
 const getexpenses = async(req, res)=> {
     try{
         let page = req.params.page || 1;
-        let Items_Per_Page = 3;
-        let count = await Expense.count({ userId:req.user.id })
-        let totalitems = count
-    const expenses = await Expense.findAll({ where : { userId: req.user.id}},{offset:(page-1) *Items_Per_Page,      limit:Items_Per_Page})
+        // console.log('this is let req.params.page',req.params.page)
+        let Items_Per_Page =Number(req.params.selectedValue || 3);
+        console.log('this is let Items_Per_Page',req.params.selectedValue)
+        const expenses2 = await Expense.findAll({ where : { userId: req.user.id}})
+        const expenses = await Expense.findAll({ where : { userId: req.user.id}, offset:(page-1)*Items_Per_Page, limit:Items_Per_Page})
+        let totalitems = expenses2.length
+        console.log('this is let totalitems',totalitems)
+        // console.log('expenses',expenses)
+
         return res.status(200).json({expenses,
             info: {
                 currentPage: page,
@@ -45,7 +50,7 @@ const getexpenses = async(req, res)=> {
                 hasPreviousPage: page > 1,
                 nextPage: +page + 1,
                 previousPage: +page - 1,
-                lastPage: Math.ceil(totalitems / Items_Per_Page) 
+                lastPage: Math.ceil(totalitems / Items_Per_Page)
             },
              success: true })
     }
@@ -87,10 +92,7 @@ const deleteexpense = async (req, res) => {
     }
 }
 
-
-
 const downloadExpenses =  async (req, res) => {
-
     try {
         if(!req.user.ispremiumuser){
             return res.status(401).json({ success: false, message: 'User is not a premium User'})
@@ -110,15 +112,11 @@ const downloadExpenses =  async (req, res) => {
         console.log(fileURL)
         res.status(200).json({fileURL,success:true})
 
-
     } catch(err) {
         console.log(err)
         res.status(500).json({ error: err, success: false, message: 'Something went wrong'})
     }
-
 };
-
-
 
 module.exports = {
     deleteexpense,

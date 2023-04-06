@@ -16,6 +16,29 @@ function addNewExpense(e){
     }).catch(err => showError(err))
 }
 
+function RPPvalue(){
+    const token  = localStorage.getItem('token')
+    const page = 1
+    const selectElement = document.getElementById("RPP");
+    const selectedValue = selectElement.value;
+    localStorage.setItem('RPP',selectedValue)
+    console.log(`Selected value: ${selectedValue}`);
+    axios.get(`http://localhost:3000/expense/getexpenses${page}${selectedValue}`, { headers: {"Authorization" : token} })
+    .then(response => {
+            response.data.expenses.forEach(expense => {
+                addNewExpensetoUI(expense);
+            })
+            // console.log("this is response.data",response.data)
+            showPagination(response.data.info)
+    }).
+    catch(err => {
+        console.log(err)
+        showError(err)
+    })
+    
+
+}
+
 function showPremiumuserMessage() {
     document.getElementById('rzp-button1').style.visibility = "hidden"
     document.getElementById('message').innerHTML = "You are a premium user "
@@ -34,6 +57,7 @@ function parseJwt (token) {
 window.addEventListener('DOMContentLoaded', ()=> {
     const page = 1
     const token  = localStorage.getItem('token')
+    const selectedValue  = localStorage.getItem('RPP') || 3
     const decodeToken = parseJwt(token)
     console.log(decodeToken)
     const ispremiumuser = decodeToken.ispremiumuser
@@ -41,13 +65,13 @@ window.addEventListener('DOMContentLoaded', ()=> {
         showPremiumuserMessage()
         showLeaderboard()
     }
-    axios.get(`http://localhost:3000/expense/getexpenses${page}`, { headers: {"Authorization" : token} })
+    axios.get(`http://localhost:3000/expense/getexpenses${page}${selectedValue}`, { headers: {"Authorization" : token} })
     .then(response => {
             response.data.expenses.forEach(expense => {
                 addNewExpensetoUI(expense);
             })
-            console.log("this is response.data",response.data)
-            showPagination(response.data)
+            // console.log("this is response.data",response.data)
+            showPagination(response.data.info)
     }).catch(err => {
         console.log(err)
         showError(err)
@@ -171,7 +195,7 @@ document.getElementById('rzp-button1').onclick = async function (e) {
 }
 
 function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previousPage,lastPage}){
-    let page = 1;
+    // let page = 1;
     try{
     const pagination = document.getElementById('pagination')
     
@@ -180,20 +204,20 @@ function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previo
     if(hasPreviousPage){
         const button1 = document.createElement('button');
         button1.innerHTML = previousPage ;
-        button1.addEventListener('click' , ()=>getPageExpenses(page,previousPage))
+        button1.addEventListener('click' , ()=>getPageExpenses(previousPage))
         pagination.appendChild(button1)
     }
 
     const button2 = document.createElement('button');
     button2.classList.add('active')
     button2.innerHTML = currentPage ;
-    button2.addEventListener('click' , ()=>getPageExpenses(page,currentPage))
+    button2.addEventListener('click' , ()=>getPageExpenses(currentPage))
     pagination.appendChild(button2)
 
     if(hasNextPage){
         const button3 = document.createElement('button');
         button3.innerHTML = nextPage ;
-        button3.addEventListener('click' , ()=>getPageExpenses(page,nextPage))
+        button3.addEventListener('click' , ()=>getPageExpenses(nextPage))
         pagination.appendChild(button3)
     }
     }catch(err){
@@ -202,13 +226,17 @@ function showPagination({currentPage,hasNextPage,hasPreviousPage,nextPage,previo
 }
 
 function getPageExpenses(page){
+    const selectedValue  = localStorage.getItem('RPP') || 3
     const token  = localStorage.getItem('token')
-    axios.get(`http://localhost:3000/expense/getexpenses${page}`, { headers: {"Authorization" : token} })
+    const parentElement = document.getElementById('listOfExpenses');
+    parentElement.innerHTML=''
+    axios.get(`http://localhost:3000/expense/getexpenses${page}${selectedValue}`, { headers: {"Authorization" : token} })
     .then(response => {
             response.data.expenses.forEach(expense => {
                 addNewExpensetoUI(expense);
             })
-            showPagination(response.data)
+            console.log("this is response.data",response.data.info)
+            showPagination(response.data.info)
     }).catch(err => {
         showError(err)
     })
