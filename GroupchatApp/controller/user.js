@@ -30,7 +30,8 @@ function isstringinvalid(string){
         return res.status(201).json({message: 'Successfuly create new user'})
     })
     }catch(err) {
-            res.status(500).json(err);
+        console.log(err)
+        res.status(500).json(err);
     }
 }
 

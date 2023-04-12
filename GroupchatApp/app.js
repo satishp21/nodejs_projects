@@ -19,7 +19,7 @@ app.use('/user', userRoutes)
 
 sequelize.sync()
     .then(() => {
-        app.listen(process.env.PORT);
+        app.listen(3000);
     })
     .catch(err => {
         console.log(err);
