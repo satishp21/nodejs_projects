@@ -9,7 +9,7 @@ const addmessage = async(req,res)=>{
         return res.status(400).json({success: false, message: 'message missing'})
     }
 
-    const chat = await Chat.create({message,userId: req.user.id})
+    const chat = await Chat.create({name:req.user.name,message,userId: req.user.id})
     return res.status(201).json({chat, success: true}) 
     } catch(err){
         console.log(err)
@@ -19,7 +19,7 @@ const addmessage = async(req,res)=>{
 
 const getmessage = async(req,res)=>{
     try{
-        const messages = await Chat.findAll({ where : { userId: req.user.id}}) 
+        const messages = await Chat.findAll() 
         return res.status(200).json({messages,success:true})
     } catch(err){
         console.log(err)

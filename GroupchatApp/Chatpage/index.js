@@ -39,7 +39,7 @@ window.addEventListener('DOMContentLoaded', ()=> {
             response.data.messages.forEach(message => {
                 console.log(message,"message")
                 console.log(message.message,"message.message")
-                addNewMessagetoUI(message.message,parseJwt(localStorage.getItem('token')));
+                addNewMessagetoUI(message.message,message);
             })
             // console.log("this is response.data",response.data)
     }).catch(err => {
@@ -54,11 +54,25 @@ function addNewMessagetoUI(message,user){
     parentElement.innerHTML += `
         <li>
             ${user.name} - ${message}
-            <button onclick='deleteMessage(event, ${user.name})'>
-                Delete message
-            </button>
         </li>`
 }
+
+function showError(err){
+    document.body.innerHTML += `<div style="color:red;"> ${err}</div>`
+}
+
+// delete button needs modification not working
+// function addNewMessagetoUI(message,user){
+//     const parentElement = document.getElementById('listOfMessages');
+//     // const expenseElemId = `message-${message.id}`;
+//     parentElement.innerHTML += `
+//         <li>
+//             ${user.name} - ${message}
+//             <button onclick='deleteMessage(event, ${message.id})'>
+//                 Delete message
+//             </button>
+//         </li>`
+// }
 
 // function deleteMessage(e, expenseid) {
 //     const token = localStorage.getItem('token')
@@ -69,12 +83,12 @@ function addNewMessagetoUI(message,user){
 //     }))
 // }
 
-function showError(err){
-    document.body.innerHTML += `<div style="color:red;"> ${err}</div>`
-}
+// function removeExpensefromUI(messageid){
+//     const messageElemId = `message-${messageid}`;
+//     document.getElementById(messageElemId).remove();
+// }
 
-function removeExpensefromUI(messageid){
-    const messageElemId = `message-${messageid}`;
-    document.getElementById(messageElemId).remove();
-}
+
+
+
 
