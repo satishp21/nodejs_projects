@@ -1,20 +1,22 @@
 function addNewMessage(e){
     e.preventDefault();
 
-    const message = e.target.message.value
+    // const message  = e.target.message.value
+
+    const message = {
+        message : e.target.message.value
+    }
     
     console.log(message)
     const token  = localStorage.getItem('token')
     const user = parseJwt(token)
-
-    addNewMessagetoUI(message,user)
     
 
-    // axios.post('http://localhost:3000/chat/addmessage',message,  { headers: {"Authorization" : token} })
-    //     .then((response) => {
-    //         // console.log(response,"this is the resposwe you are lookigng for")
-    //     addNewMessagetoUI(response.data.expense);
-    // }).catch(err => showError(err))
+    axios.post('http://localhost:3000/chat/addmessage',message,  { headers: {"Authorization" : token} })
+        .then((response) => {
+            console.log(response,"this is the resposwe you are lookigng for")
+            addNewMessagetoUI(response.data.chat.message,user);
+    }).catch(err => showError(err))
 }
 
 function parseJwt (token) {
@@ -27,20 +29,24 @@ function parseJwt (token) {
     return JSON.parse(jsonPayload);
 }
 
-// window.addEventListener('DOMContentLoaded', ()=> {
-//     const token  = localStorage.getItem('token')
-//     const decodeToken = parseJwt(token)
-//     console.log(decodeToken)
-
-//     .then(response => {
-//             response.data.expenses.forEach(expense => {
-//                 addNewMessagetoUI(expense);
-//             })
-//     }).catch(err => {
-//         console.log(err)
-//         showError(err)
-//     })
-// });
+window.addEventListener('DOMContentLoaded', ()=> {
+    const token  = localStorage.getItem('token')
+    const decodeToken = parseJwt(token)
+    console.log(decodeToken)
+    axios.get('http://localhost:3000/chat/getmessage', { headers: {"Authorization" : token} })
+    .then(response => {
+            console.log(response,"this is the response u r looking for")
+            response.data.messages.forEach(message => {
+                console.log(message,"message")
+                console.log(message.message,"message.message")
+                addNewMessagetoUI(message.message,parseJwt(localStorage.getItem('token')));
+            })
+            // console.log("this is response.data",response.data)
+    }).catch(err => {
+        console.log(err)
+        showError(err)
+    })
+});
 
 function addNewMessagetoUI(message,user){
     const parentElement = document.getElementById('listOfMessages');
