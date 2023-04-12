@@ -12,6 +12,7 @@ function login(e) {
             console.log(response)
             console.log(response.data,response.data.user, "this is response.data.user")
             // localStorage.setItem('token', response.data.token);
+            alert("login successfull")
             // window.location.href = "../ExpenseTracker/index.html" // change the page on successful login
         } else {
             throw new Error('Failed to login')
