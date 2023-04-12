@@ -36,7 +36,7 @@ function isstringinvalid(string){
 }
 
 const generateAccessToken = (id, name) => {
-    return jwt.sign({ userId : id, name: name } ,"sec key");
+    return jwt.sign({ userId : id, name: name } ,process.env.SEC_KEY);
 }
 
 const login = async (req, res)=>{

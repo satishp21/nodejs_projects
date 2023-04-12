@@ -10,6 +10,9 @@ const userRoutes = require('./routes/user')
 
 const app = express();
 
+const dotenv = require('dotenv');
+dotenv.config();
+
 app.use(cors());
 
 // app.use(bodyParser.urlencoded());  ////this is for handling forms
@@ -19,7 +22,7 @@ app.use('/user', userRoutes)
 
 sequelize.sync()
     .then(() => {
-        app.listen(3000);
+        app.listen(process.env.PORT);
     })
     .catch(err => {
         console.log(err);

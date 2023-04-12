@@ -11,9 +11,9 @@ function login(e) {
         if(response.status === 200 ){
             console.log(response)
             console.log(response.data,response.data.user, "this is response.data.user")
-            // localStorage.setItem('token', response.data.token);
+            localStorage.setItem('token', response.data.token);
             alert("login successfull")
-            // window.location.href = "../ExpenseTracker/index.html" // change the page on successful login
+            window.location.href = "../Chatpage/index.html" // change the page on successful login
         } else {
             throw new Error('Failed to login')
         }
