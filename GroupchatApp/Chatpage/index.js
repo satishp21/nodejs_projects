@@ -1,8 +1,6 @@
 function addNewMessage(e){
     e.preventDefault();
 
-    // const message  = e.target.message.value
-
     const message = {
         message : e.target.message.value
     }
@@ -11,11 +9,10 @@ function addNewMessage(e){
     const token  = localStorage.getItem('token')
     const user = parseJwt(token)
     
-
     axios.post('http://localhost:3000/chat/addmessage',message,  { headers: {"Authorization" : token} })
         .then((response) => {
             console.log(response,"this is the resposwe you are lookigng for")
-            addNewMessagetoUI(response.data.chat.message,user);
+            // addNewMessagetoUI(response.data.chat.message,user);
     }).catch(err => showError(err))
 }
 
@@ -29,23 +26,45 @@ function parseJwt (token) {
     return JSON.parse(jsonPayload);
 }
 
-window.addEventListener('DOMContentLoaded', ()=> {
+window.addEventListener('DOMContentLoaded', (e)=> {
+    e.preventDefault();
     const token  = localStorage.getItem('token')
     const decodeToken = parseJwt(token)
     console.log(decodeToken)
-    axios.get('http://localhost:3000/chat/getmessage', { headers: {"Authorization" : token} })
-    .then(response => {
+    let lastTimestamp = 0;
+    setInterval(() => {
+        axios.get('http://localhost:3000/chat/getmessage', { headers: {"Authorization" : token} })
+          .then(response => {
             console.log(response,"this is the response u r looking for")
             response.data.messages.forEach(message => {
-                console.log(message,"message")
-                console.log(message.message,"message.message")
-                addNewMessagetoUI(message.message,message);
+                console.log(message.id,"this is message.id")
+                if (message.id > lastTimestamp) {
+                    console.log(message,"message")
+                    console.log(message.message,"message.message")
+                    addNewMessagetoUI(message.message, message);
+                    lastTimestamp = message.id;
+                  }
             })
-            // console.log("this is response.data",response.data)
-    }).catch(err => {
-        console.log(err)
-        showError(err)
-    })
+          })
+          .catch(err => {
+            console.log(err)
+            showError(err)
+          });
+      }, 1000);
+    // setInterval(
+    // axios.get('http://localhost:3000/chat/getmessage', { headers: {"Authorization" : token} })
+    // .then(response => {
+    //         console.log(response,"this is the response u r looking for")
+    //         response.data.messages.forEach(message => {
+    //             console.log(message,"message")
+    //             console.log(message.message,"message.message")
+    //             addNewMessagetoUI(message.message,message);
+    //         })
+    //         // console.log("this is response.data",response.data)
+    // }).catch(err => {
+    //     console.log(err)
+    //     showError(err)
+    // }),1000)
 });
 
 function addNewMessagetoUI(message,user){
