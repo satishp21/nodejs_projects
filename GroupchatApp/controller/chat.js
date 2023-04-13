@@ -1,5 +1,6 @@
 const Chat = require('../models/chat');
 const User = require('../models/users');
+const { Op } = require('sequelize');
 
 const addmessage = async(req,res)=>{
     try{
@@ -19,7 +20,8 @@ const addmessage = async(req,res)=>{
 
 const getmessage = async(req,res)=>{
     try{
-        const messages = await Chat.findAll() 
+        const lastMsgId = req.params.lastMsgId
+        const messages = await Chat.findAll({where:{ id: { [Op.gt]: lastMsgId } }}) 
         return res.status(200).json({messages,success:true})
     } catch(err){
         console.log(err)

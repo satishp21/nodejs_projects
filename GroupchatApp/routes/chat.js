@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.post('/addmessage',authController.authenticate, chatController.addmessage);
 
-router.get('/getmessage',authController.authenticate, chatController.getmessage)
+router.get('/getmessage/:lastMsgId',authController.authenticate, chatController.getmessage)
 
 module.exports = router;
