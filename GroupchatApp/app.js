@@ -1,36 +1,49 @@
 const express = require('express');
-const fs =require('fs')
-const path = require('path')
-var cors = require('cors')
+const bodyParser = require('body-parser');
 
+//database
 const sequelize = require('./util/database');
+const cors = require('cors');
+const { serialize } = require('v8');
 
-const Chat = require('./models/chat');
-const User = require('./models/users');
-
-const userRoutes = require('./routes/user')
-const chatRoutes = require('./routes/chat')
+//routes
+const userRoutes = require('./routes/user');
+const groupRoutes = require('./routes/group');
+const chatRoutes = require('./routes/chat');
+//models
+const User = require('./models/user')
+const Chat = require('./models/chats')
+const Group = require('./models/group');
+const userGroup = require('./models/userGroup');
 
 const app = express();
 
-const dotenv = require('dotenv');
-dotenv.config();
+app.use(express.json());
+app.use(cors({
+    origin:'*',
+    credentials:true
+}));
 
-app.use(cors());
+app.use('/user',userRoutes);
+app.use(groupRoutes);
+app.use(chatRoutes);
 
-// app.use(bodyParser.urlencoded());  ////this is for handling forms
-app.use(express.json());  //this is for handling jsons
+//associations
+User.hasMany(Chat);
+Chat.belongsTo(User);
 
-app.use('/user', userRoutes)
-app.use('/chat', chatRoutes)
+Group.belongsToMany(User, {through:userGroup});
+User.belongsToMany(Group, {through: userGroup});
 
-User.hasMany(Chat)
-Chat.belongsTo(User)
+Group.hasMany(Chat);
+Chat.belongsTo(Group);
 
-sequelize.sync()
-    .then(() => {
-        app.listen(process.env.PORT);
-    })
-    .catch(err => {
-        console.log(err);
-    })
+sequelize
+  .sync()
+  .then(result => {
+    // console.log(result);
+    app.listen(3000);
+  })
+  .catch(err => {
+    console.log(err);
+  });
