@@ -5,7 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Page</title>
-    <!-- <link rel="stylesheet" href="chat.css"> -->
 </head>
 <body>
        <section id="top">
@@ -47,7 +46,8 @@
             <form onsubmit="sendGroupMsg(event)" id="group-chat-form" class="send-container">
                 <input type="text" id="group-chat-input" class="message-input" placeholder="Type your message" required>
                 <button type="submit" id="send-btn-group" class="send-btn">Send</button>
-            </form>    
+                <button onclick="sendMedia();" type="send-media" id="send-media-group" class="send-media-btn">UP</button>
+            </form>  
         </div> 
        </section>
 

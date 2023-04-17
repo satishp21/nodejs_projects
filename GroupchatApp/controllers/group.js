@@ -16,18 +16,18 @@ exports.createGroup = async (req, res) => {
         console.log(err);
         res.status(500).json({ message: 'server error' });
     }
-        
 }
 
 exports.deleteGroup=async (req,res)=>{
     try{
         const gId=req.params.gId;
-        // console.log('>>>>>',gId)
+        console.log('gId>>>>>',gId)
+        console.log('req.user.id>>>>>',req.user.id)
 
         //for checking current user if admin
         const adminCheck= await UserGroup.findOne({where:{userId:req.user.id,groupId:gId}});
-        // console.log(adminCheck);
-        if(adminCheck.isAdmin === false){
+        console.log(adminCheck,"this is admin check");
+        if(adminCheck.isAdmin === null){
             return res.status(400).json({message:"You are not an admin"});
         }
 
@@ -39,7 +39,8 @@ exports.deleteGroup=async (req,res)=>{
         await Chat.destroy({where:{id:array}});
         await Group.destroy({where:{id:gId}});
         res.status(200).json({message:'successfully deleted'});
-    }catch(err){
+    }
+    catch(err){
         console.log(err);
         res.status(500);
     }      
@@ -61,16 +62,15 @@ exports.getUsers = async (req,res) => {
         const gId= req.query.gId;
         if(gId != null){
             const ress= await UserGroup.findAll({attributes:['userId'],where:{groupId:gId}});
-            // console.log(ress)
             let userIdArray=[];
             ress.forEach(id=>{
                 userIdArray.push(id.userId);
             })
-            // console.log(userIdArray);
+            // console.log(userIdArray,'userIdArray');
             const userData= await User.findAll({attributes:['id','name','email'],include:[{model:Group, where:{id:gId}}],where:{id:userIdArray}});
-            // console.log(userData);
+            console.log(userData,"userDara");
             res.status(200).json({userData})
-        }else if(gId == null){
+        }else if(gId == null){ //this code shows the user at bottom of the page by default
             const user = await User.findAll({attributes:['id','name','email'],where:{id:{[Op.ne]:req.user.id}}});
             // console.log(user)
             res.status(200).json({success:true,user});
@@ -89,7 +89,7 @@ exports.addUserToGroup = async(req, res) => {
         //for checking current user if admin
         const adminCheck= await UserGroup.findOne({where:{userId:req.user.id,groupId:groupId}});
         // console.log(adminCheck);
-        if(adminCheck.isAdmin === false){
+        if(adminCheck.isAdmin === null){
             return res.status(400).json({message:"You are not an admin"});
         }
         
@@ -110,19 +110,21 @@ exports.addUserToGroup = async(req, res) => {
 
 exports.removeUser = async(req,res)=>{
     try{
-        const { groupId, email } = req.body;
-        console.log(req.body)
+        const gId = req.body.groupId
+        const email = req.body.email
+        // const { email,gId } = req.body;
+        console.log(gId,email,req.user.id,"this is req.body>>>>>>>>>>>>>>>>>>>>>>>>>>")
 
         //for checking current user if admin
-        const adminCheck= await UserGroup.findOne({where:{userId:req.user.id,groupId:groupId}});
+        const adminCheck= await UserGroup.findOne({where:{userId:req.user.id,groupId:gId}});
         // console.log(adminCheck);
-        if(adminCheck.isAdmin === false){
+        if(adminCheck.isAdmin === null){
             return res.status(400).json({message:"You are not an admin"});
         }
 
         const userToRemove=await User.findOne({ where: { email } })
         // console.log(userToRemove)
-        const result= await UserGroup.destroy({where:{userId:userToRemove.id,groupId:groupId}});
+        const result= await UserGroup.destroy({where:{userId:userToRemove.id,groupId:gId}});
         // console.log('>>>>>>',result)
         if(result==0) return res.status(404).json({message:'User not present in the group'});
         res.status(200).json({message:'User removed from the group'});
@@ -136,6 +138,12 @@ exports.removeUser = async(req,res)=>{
 exports.makeAdmin=async(req,res)=>{
     try{
         const {email, groupId}= req.body;
+        //for checking current user if admin
+        const adminCheck= await UserGroup.findOne({where:{userId:req.user.id,groupId:groupId}});
+        // console.log(adminCheck);
+        if(adminCheck.isAdmin === null){
+            return res.status(400).json({message:"You are not an admin"});
+        }
         const user= await User.findOne({where:{email:email}});
         await UserGroup.update({isAdmin:true},{where:{userId:user.id,groupId:groupId}});
         res.status(200).json({message:"user is now admin"})

@@ -48,5 +48,5 @@ exports.signunp = async (req, res, next) => {
  }
 
  function generateToken(id) {
-    return jwt.sign({userId: id}, 'sectoauchapp')
+    return jwt.sign({userId: id}, process.env.SEC_KEY)
  }

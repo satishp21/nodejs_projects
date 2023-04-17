@@ -1,4 +1,6 @@
 const Chat = require('../models/chats');
+const S3Services = require('../services/s3Services')
+const Op = require('sequelize').Op;
 
 exports.postChat = (req, res) => {
     const { message, name, groupId } = req.body;
@@ -18,9 +20,28 @@ exports.getChats = async (req, res) => {
         const lastId = req.query.id;
         console.log('***********', lastId)
         const gId = req.query.gId;
-        const chat = await Chat.findAll({ where: { groupId:gId} });
+        // const chat = await Chat.findAll({ where: { groupId:gId} });
+        const chat = await Chat.findAll({ 
+            where: { 
+              groupId: gId,
+              id: {
+                [Op.gt]: lastId 
+              }
+            } 
+          });
         res.status(200).json({ success: true, chat });
     } catch (err) {
         console.log(err)
+    }
+}
+
+exports.uploadFile = async(req,res) => {
+    try {
+        const fileURL = await S3Services.uploadFile('assets/flower.jpg')
+        console.log(fileURL)
+        res.status(200).json({ success: true, fileURL})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json(error)
     }
 }
