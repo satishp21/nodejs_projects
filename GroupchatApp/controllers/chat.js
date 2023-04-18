@@ -1,6 +1,8 @@
 const Chat = require('../models/chats');
 const S3Services = require('../services/s3Services')
 const Op = require('sequelize').Op;
+//.Op at the end of the require('sequelize') statement is accessing the Op property of the exported sequelize module, which contains all the operators that can be used in Sequelize queries.
+// can also written as const { Op } = require('sequelize');
 
 exports.postChat = (req, res) => {
     const { message, name, groupId } = req.body;
@@ -25,7 +27,7 @@ exports.getChats = async (req, res) => {
             where: { 
               groupId: gId,
               id: {
-                [Op.gt]: lastId 
+                [Op.gt]: lastId // only ids which are > lastId will be taken.
               }
             } 
           });

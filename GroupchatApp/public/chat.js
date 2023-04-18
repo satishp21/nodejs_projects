@@ -89,14 +89,16 @@ const authAxios = axios.create({
           localStorage.setItem("localMsg", JSON.stringify(retrivedMsg));
   
           const div = document.getElementById("group-chat-receive-box");
+          div.innerHTML = ""
           retrivedMsg.forEach((chat) => {
             div.innerHTML += `<div id="${chat.id}>"><span style="color:green;"><b>${chat.name}:</b></span><span>${chat.message}</span></div>`;
           });
         })
         .catch((err) => console.log(err.response));
-      // }, 1000)
+      // }, 4000)
     }
-  
+
+
     function sendGroupMsg(event,imageurl) {
       event.preventDefault();
   
@@ -117,7 +119,7 @@ const authAxios = axios.create({
           .catch((err) => console.log(err));
         document.getElementById("group-chat-input").value = "";
         document.getElementById("group-chat-receive-box").innerHTML += `
-                  <div><span style="color:green;"><b>${name}:</b></span><span>${message}</span></div>`;
+                  <div><span style="color:green;"><b>${name}:</b></span><span>${obj.message}</span></div>`;
       }
     }
   
@@ -145,6 +147,7 @@ const authAxios = axios.create({
               console.log(res.data);
               localStorage.removeItem("groupId");
               alert(`Group with id-${gId} is deleted successfully`);
+              window.location.reload();
             })
             .catch((err) => 
               alert("you are not admin"))
@@ -186,6 +189,7 @@ const authAxios = axios.create({
             .then((res) => {
               console.log(res.data);
               alert(`user with ${obj.email} has been removed from the group`);
+              window.location.reload();
             })
             .catch((err) => {
               console.log(err.response);
@@ -204,6 +208,7 @@ const authAxios = axios.create({
           .post("/make-admin", obj)
           .then((res) => {
             alert(`${obj.email} is an admin now`)
+            window.location.reload();
           })
           .catch((err) => 
           alert('you are not an admin'));
@@ -235,6 +240,7 @@ const authAxios = axios.create({
           .then((res) => {
             console.log(res.data);
             alert(`user ${email} added to the group`);
+            window.location.reload();
           })
           .catch((err) => {
             console.log(err);

@@ -5,6 +5,7 @@ var cors = require('cors')
 const helmet = require('helmet')
 const compression = require('compression')
 const morgan = require('morgan')
+//morgan middleware is being used to log HTTP requests. morgan is a popular logging middleware for Express.js that logs requests in a specific format, based on a pre-defined set of tokens
 
 const sequelize = require('./util/database');
 const User = require('./models/users');
@@ -27,8 +28,8 @@ const { Stream } = require('stream');
 
 app.use(helmet()) //middleware to  HTTP headers to improve security
 app.use(compression())
-app.use(morgan('combined',{stream:accessLogStream}))
-
+app.use(morgan('combined',{stream:accessLogStream}))  
+// above line of code adds the morgan middleware to the Express.js application, which logs HTTP requests in the "combined" format and writes the logs to the accessLogStream writable stream.
 
 // get config vars
 dotenv.config();

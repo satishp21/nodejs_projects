@@ -1,4 +1,4 @@
-const {Op, where}= require('sequelize');
+const {Op}= require('sequelize');
 
 const Group = require('../models/group');
 const User = require('../models/user');
@@ -43,7 +43,7 @@ exports.deleteGroup=async (req,res)=>{
     catch(err){
         console.log(err);
         res.status(500);
-    }      
+    }
 }
 
 exports.getGroups = (req, res) => {
@@ -60,7 +60,7 @@ exports.getGroups = (req, res) => {
 exports.getUsers = async (req,res) => {
     try {
         const gId= req.query.gId;
-        if(gId != null){
+        if(gId != null){ //this code shows users of perticular group
             const ress= await UserGroup.findAll({attributes:['userId'],where:{groupId:gId}});
             let userIdArray=[];
             ress.forEach(id=>{
@@ -72,7 +72,7 @@ exports.getUsers = async (req,res) => {
             res.status(200).json({userData})
         }else if(gId == null){ //this code shows the user at bottom of the page by default
             const user = await User.findAll({attributes:['id','name','email'],where:{id:{[Op.ne]:req.user.id}}});
-            // console.log(user)
+            //in anove code ne stands for not equal so it will take user where id not equal to req.user.id
             res.status(200).json({success:true,user});
         }
     } catch (err) {
