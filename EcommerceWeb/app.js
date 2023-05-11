@@ -9,7 +9,7 @@ const mongoConnect = require('./util/database').mongoConnect;
 
 // const sequelize = require('./util/database');
 // const Product = require('./models/product');
-// const User = require('./models/user');
+const User = require('./models/user');
 // const Cart = require('./models/cart');
 // const CartItem = require('./models/cart-item');
 
@@ -25,12 +25,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  // User.findByPk(1)
-  //   .then(user => {
-  //     req.user = user;
-  //     next();
-  //   })
-  //   .catch(err => console.log(err));
+  User.findbyuserid('645d04daa7d7387cbea453d8')
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => console.log(err));
   next()
 });
 
