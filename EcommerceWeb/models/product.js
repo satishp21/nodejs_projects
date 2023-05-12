@@ -22,7 +22,6 @@ class Product {
       // update existing product
       dbOp = db.collection('products').updateOne({_id :this._id}, {$set :this})
     }
-
     else{
       //create new product
       dbOp = db.collection('products').insertOne(this)
