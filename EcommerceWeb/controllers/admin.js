@@ -20,7 +20,7 @@ exports.postAddProduct = (req, res, next) => {
   //     imageUrl: imageUrl,
   //     description: description
   //   })
-  const product = new Product(title,price,description,imageUrl)
+  const product = new Product(title,price,description,imageUrl,null,req.user._id)
   product.save()
     .then(result => {
       // console.log(result);
