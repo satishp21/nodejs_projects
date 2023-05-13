@@ -93,6 +93,17 @@ exports.getOrders = (req, res, next) => {
   });
 };
 
+exports.postOrder = (req, res, next) => {
+  let fetchedcart;
+  req.user.addOrder().then(result => {
+    res.redirect('/orders')
+  }).catch(err => console.log(err));
+  // res.render('shop/orders', {
+  //   path: '/orders',
+  //   pageTitle: 'Your Orders'
+  // });
+};
+
 exports.getCheckout = (req, res, next) => {
   res.render('shop/checkout', {
     path: '/checkout',

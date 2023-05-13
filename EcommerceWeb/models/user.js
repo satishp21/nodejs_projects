@@ -67,6 +67,19 @@ class User {
     })
   }
 
+  addOrder() {
+    const orders = [...this.cart.items]
+    const db = getDb()  
+    //return db.collection('orders').insertOne(this.cart)
+    return db.collection('orders').updateOne({_id : '645f48f5ea07447c6af1272d'}, {$set: {_items :orders}})
+    .then(result => {
+      this.cart = {items:[]}
+      return db.collection('users').updateOne({_id : new ObjectId(this._id)}, {$set: {cart : {items:[]}}})
+    }).catch(err => {
+      console.log(err)
+    })
+  }
+
   static findById(userId) {
     const db = getDb();
     return db.collection('users').findOne({_id : new ObjectId(userId)})
@@ -78,7 +91,6 @@ class User {
       console.log(err)
     });
   } 
-
 }
 
 module.exports = User;
