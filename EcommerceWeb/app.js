@@ -10,7 +10,7 @@ const errorController = require('./controllers/error');
 
 // const sequelize = require('./util/database');
 // const Product = require('./models/product');
-// const User = require('./models/user');
+const User = require('./models/user');
 // const Cart = require('./models/cart');
 // const CartItem = require('./models/cart-item');
 
@@ -25,14 +25,14 @@ const shopRoutes = require('./routes/shop');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use((req, res, next) => {
-//   User.findById('645e041be979d2438e8409b3')
-//     .then(user => {
-//       req.user = new User(user.name,user.email,user.cart,user._id);
-//       next();
-//     })
-//     .catch(err => console.log(err));
-// });
+app.use((req, res, next) => {
+  User.findById('645fa267b6556321b677bdf1')
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => console.log(err));
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
@@ -41,6 +41,18 @@ app.use(errorController.get404);
 
 mongoose.connect('mongodb+srv://piyushgsuthar7:piyush@cluster0.lu2xtud.mongodb.net/shop?retryWrites=true&w=majority')
 .then(result => {
+  User.findOne().then((user) => {
+    if (!user) {
+      const user = new User ({
+        name : 'satish',
+        email : 'satish@gmail.com',
+        cart : {
+          items : []
+        }
+      })
+      user.save()
+    }
+  })
   console.log('connected')
   app.listen(3000)
 }).catch(err => {console.log(err)})
