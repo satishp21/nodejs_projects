@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const User = require('../models/user');
+const Order = require('../models/order');
 
 exports.getProducts = (req, res, next) => {
   Product.find()
@@ -72,13 +72,15 @@ exports.postCart = (req, res, next) => {
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
-
   const prodId = req.body.productId;
+  //1 way without methd
   // const userId = req.user._id;
   // User.updateOne(
   //   { _id: userId },
   //   { $pull: { 'cart.items': { productId: prodId } } }
   // )
+  
+  //other way
   req.user.removeFromCart(prodId)
     .then(() => {
       res.redirect('/cart');
@@ -87,7 +89,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  req.user.getOrders()
+  Order.find({'user.userId' : req.user._id})
   .then(orders => {
     res.render('shop/orders', {
       path: '/orders',
@@ -100,11 +102,29 @@ exports.getOrders = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
-  let fetchedcart;
-  req.user.addOrder().then(result => {
-    console.log(result,"<<<<<<<<<<<<<<this is also result")
-    res.redirect('/orders')
-  }).catch((err) => {console.log(err)});
+  req.user
+  .populate('cart.items.productId')
+  .then(user => {
+    console.log(user.cart.items)
+    const products = user.cart.items.map(i => {
+      return {quantity : i.quantity, product : {...i.productId._doc}} //._doc will letus acces all productdata not justid 
+        })
+        const order = new Order({
+          user: {
+            name : req.user.name,
+            userId : req.user
+          },
+          products : products
+        })
+        order.save()
+      })
+    .then(result => {
+      return req.user.clearCart()
+    })
+    .then(result => {
+      res.redirect('/orders')
+    })
+    .catch((err) => {console.log(err)});
 };
 
 exports.getCheckout = (req, res, next) => {
