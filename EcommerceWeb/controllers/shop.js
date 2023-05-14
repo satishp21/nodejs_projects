@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const User = require('../models/user');
 
 exports.getProducts = (req, res, next) => {
   Product.find()
@@ -71,8 +72,14 @@ exports.postCart = (req, res, next) => {
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
+
   const prodId = req.body.productId;
-  req.user.deleteItemFromCart(prodId)
+  // const userId = req.user._id;
+  // User.updateOne(
+  //   { _id: userId },
+  //   { $pull: { 'cart.items': { productId: prodId } } }
+  // )
+  req.user.removeFromCart(prodId)
     .then(() => {
       res.redirect('/cart');
     })
