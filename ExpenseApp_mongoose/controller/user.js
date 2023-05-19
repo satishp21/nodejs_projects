@@ -19,9 +19,7 @@ function isstringinvalid(string){
     }
     const saltrounds = 10;
     bcrypt.hash(password, saltrounds, async (err, hash) => {
-        console.log(err)
-
-        // await User.create({ name, email, password: hash}).
+        
         const user = new User ({ name, email, password: hash})
         user.save()
         res.status(201).json({message: 'Successfuly create new user'})
@@ -29,7 +27,6 @@ function isstringinvalid(string){
     }catch(err) {
             res.status(500).json(err);
     }
-
 }
 
 const generateAccessToken = (id, name, ispremiumuser) => {

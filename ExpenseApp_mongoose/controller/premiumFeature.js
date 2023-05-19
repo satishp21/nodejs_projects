@@ -16,7 +16,7 @@ const getUserLeaderBoard = async (req, res) => {
 
 const getUrldownloadfiles = async (req, res) => {
     try{
-        const urls = await FilesDownloaded.find({})
+        const urls = await FilesDownloaded.find({userId : req.user.id})
         res.status(200).json(urls)
 
 } catch (err){

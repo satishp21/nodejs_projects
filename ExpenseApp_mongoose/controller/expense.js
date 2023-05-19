@@ -1,7 +1,6 @@
 const Expense = require('../models/expenses');
 const User = require('../models/users');
 const FilesDownloaded = require('../models/filesdownloaded');
-const UserServices = require('../services/userservices')
 const s3Services = require('../services/s3services')
 const mongoose = require('mongoose')
 
@@ -50,7 +49,7 @@ const getexpenses = async (req, res) => {
                 hasPreviousPage: page > 1,
                 nextPage: +page + 1,
                 previousPage: +page - 1,
-                lastPage: Math.ceil(totalItems / itemsPerPage)
+                lastPage: Math.ceil(totalItems / itemsPerPage) // rounds up number to equal to or greater than value (it has to take greater value so it wont skip any expense which is at last+++++)
             },
             success: true
         });
@@ -101,7 +100,7 @@ const downloadExpenses =  async (req, res) => {
         const filename = `Expense.txt${userId}/${new Date}`
         const fileURL= await s3Services.uploadTOS3(strigifiedexpenses,filename)
 
-        new FilesDownloaded ({ fileUrl:fileURL}).save()
+        new FilesDownloaded ({ fileUrl:fileURL ,userId:userId}).save()
         
         console.log(fileURL)
         res.status(200).json({fileURL,success:true})

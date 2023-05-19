@@ -6,15 +6,57 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
+      
         body {
-          margin: 0;
-          padding: 0;
-          background-image: url("../calculator-text-track-expenses-currency-260nw-556227808.webp");
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f1f1f1;
         }
-      </style>
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 300px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        a {
+            margin-top: 20px;
+            text-decoration: none;
+            color: #333333;
+        }
+    </style>
 </head>
 <body>
     <form onsubmit="signup(event)">
@@ -26,8 +68,8 @@
         <input type="password" name="password" required />
         <button>Signup</button>
     </form>
-    <a href='../Login/login.html'> Existing User - Login</a>
+    <a href="../Login/login.html">Existing User - Login</a>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
-    <script src="./signup.js" ></script>
+    <script src="./signup.js"></script>
 </body>
 </html>

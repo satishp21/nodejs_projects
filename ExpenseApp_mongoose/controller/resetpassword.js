@@ -1,5 +1,3 @@
-// const uuid = require('uuid');
-const sgMail = require('@sendgrid/mail');
 const Sib = require('sib-api-v3-sdk')
 require('dotenv').config()
 const client = Sib.ApiClient.instance
@@ -50,7 +48,6 @@ const forgotpassword = async (req, res) => {
         console.error(err)
         return res.json({ message: err, sucess: false });
     }
-
 }
 
 const resetpassword = (req, res) => {

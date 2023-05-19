@@ -7,13 +7,8 @@ const compression = require('compression')
 const morgan = require('morgan')
 //morgan middleware is being used to log HTTP requests. morgan is a popular logging middleware for Express.js that logs requests in a specific format, based on a pre-defined set of tokens
 
-// const sequelize = require('./util/database');
+
 const mongoose = require('mongoose')
-const User = require('./models/users');
-const Expense = require('./models/expenses');
-const Order = require('./models/orders');
-const Forgotpassword = require('./models/forgotpassword');
-const FilesDownloaded = require('./models/filesdownloaded');
 
 const userRoutes = require('./routes/user')
 const purchaseRoutes = require('./routes/purchase')
@@ -45,26 +40,6 @@ app.use('/expense', expenseRoutes)
 app.use('/purchase', purchaseRoutes)
 app.use('/premium', premiumFeatureRoutes)
 app.use('/password', resetPasswordRoutes)
-
-// User.hasMany(Expense);
-// Expense.belongsTo(User);
-
-// User.hasMany(Order);
-// Order.belongsTo(User);
-
-// User.hasMany(Forgotpassword);
-// Forgotpassword.belongsTo(User);
-
-// User.hasMany(FilesDownloaded);
-// FilesDownloaded.belongsTo(User);
-
-// sequelize.sync()
-//     .then(() => {
-//         app.listen(process.env.PORT);
-//     })
-//     .catch(err => {
-//         console.log(err);
-//     })
 
 mongoose.connect('mongodb+srv://piyushgsuthar7:Ja9jRGepIghA4O6y@cluster0.kngxlkj.mongodb.net/expenseapp?retryWrites=true&w=majority')
 .then(result => {
