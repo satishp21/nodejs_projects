@@ -1,57 +1,121 @@
 const uuid = require('uuid');
 const sgMail = require('@sendgrid/mail');
-const Sib = require('sib-api-v3-sdk')
+const sib = require('sib-api-v3-sdk')
 require('dotenv').config()
-const client = Sib.ApiClient.instance
+const client = sib.ApiClient.instance
 const bcrypt = require('bcrypt');
 
 const User = require('../models/users');
 const Forgotpassword = require('../models/forgotpassword');
 
-const forgotpassword = async (req, res) => {
-    try {
-        const { email } =  req.body;
-        const user = await User.findOne({where : { email }});
-        if(user){
-            const id = uuid.v4();
-            console.log(id,'id')
-            await user.createForgotpassword({ id , active: true })
-                .catch(err => {
-                    throw new Error(err)
-                })
+// const forgotpassword = async (req, res) => {
+//     try {
+//         const { email } =  req.body;
+//         const user = await User.findOne({where : { email }});
+//         if(user){
+//             const id = uuid.v4();
+//             console.log(id,'id')
+//             await user.createForgotpassword({ id , active: true })
+//                 .catch(err => {
+//                     throw new Error(err)
+//                 })
 
-            const apiKey = client.authentications['api-key']
-            apiKey.apiKey = process.env.API_KEY
+//             const apiKey = client.authentications['api-key']
+//             apiKey.apiKey = process.env.API_KEY
 
-            const  tranEmailApi = new Sib.TransactionalEmailsApi()
+//             const  tranEmailApi = new Sib.TransactionalEmailsApi()
 
-            const sender = {
-                email : 'satishdpanchal786@gmail.com'
-            }
-            const receivers = {
-                email : 'satishdpanchal786@gmail.com'
-            }
+//             const sender = {
+//                 email : 'satishdpanchal786@gmail.com'
+//             }
+//             const receivers = {
+//                 email : 'satishdpanchal786@gmail.com'
+//             }
         
-            response = await tranEmailApi.sendTransacEmail({
-                sender,
-                to:receivers,
-                subject:'this mail is for your password change request',
-                textContent :`this mail is for your password change request ,http://localhost:3000/password/resetpassword`
-            })
+//             response = await tranEmailApi.sendTransacEmail({
+//                 sender,
+//                 to:receivers,
+//                 subject:'this mail is for your password change request',
+//                 textContent :`this mail is for your password change request ,http://localhost:3000/password/resetpassword`
+//             })
   
-            .catch((error) => {
-                console.log(error)
-                throw new Error(error);
-            })
-            //send mail
-        }else {
-            throw new Error('User doesnt exist')
-        }
-    } catch(err){
-        console.error(err)
-        return res.json({ message: err, sucess: false });
+//             .catch((error) => {
+//                 console.log(error)
+//                 throw new Error(error);
+//             })
+//             //send mail
+//         }else {
+//             throw new Error('User doesnt exist')
+//         }
+//     } catch(err){
+//         console.error(err)
+//         return res.json({ message: err, sucess: false });
+//     }
+
+// }
+
+const forgotPassword = async (req,res,next) => {
+    const {email} =req.body ;
+
+    const user = await User.findOne({where:{email}});
+
+            // if(user){
+            // console.log(id,'id')
+            // await user.createForgotpassword({ id , active: true })
+            //     .catch(err => {
+            //         throw new Error(err)
+            //     })
+            // }   
+
+    const id = uuid.v4();
+
+    console.log(id);
+    console.log(user)
+
+    user.createForgotpassword({id,active:true}).catch(err=>{ throw new Error(err)})
+
+    console.log('into forgot');
+
+    console.log(email);
+
+    const client = sib.ApiClient.instance
+
+    const apiKey = client.authentications['api-key']
+
+    apiKey.apiKey = process.env.API_KEY
+
+
+    const tranEmailApi = new sib.TransactionalEmailsApi()
+    
+    const sender = {
+        email : 'satishdpanchal786@gmail.com',
+        name : 'satish'
     }
 
+    console.log(sender,">>>>>>>>>>>>>>>>>>>sendeerrrr");
+   // const token = localStorage.getItem('token')
+
+    
+    const recievers = [
+        {
+            email : email,
+        },
+    ]
+    console.log(recievers);
+
+    console.log('******************************');
+
+    tranEmailApi.sendTransacEmail({
+        sender,
+        to: recievers,
+        subject: 'forgotpass please reset',
+        textContent: `Follow the link and reset password`,
+        htmlContent: `Click on the link below to reset password <br> <a href="http://localhost:3000/password/resetpassword/${id}">Reset password</a>`,
+
+    }).then((response)=>{
+        //console.log('after transaction');
+        return res.status(202).json({sucess: true, message: "password mail sent Successful"});
+    }).catch(err=>console.log(err))
 }
 
 const resetpassword = (req, res) => {
@@ -115,7 +179,7 @@ const updatepassword = (req, res) => {
 }
 
 module.exports = {
-    forgotpassword,
+    forgotPassword,
     updatepassword,
     resetpassword
 }
