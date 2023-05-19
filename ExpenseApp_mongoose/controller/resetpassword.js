@@ -1,6 +1,6 @@
-const Sib = require('sib-api-v3-sdk')
+const sib = require('sib-api-v3-sdk')
 require('dotenv').config()
-const client = Sib.ApiClient.instance
+const client = sib.ApiClient.instance
 const bcrypt = require('bcrypt');
 
 const User = require('../models/users');
@@ -14,39 +14,43 @@ const forgotpassword = async (req, res) => {
 
             const forgetpass = new Forgotpassword({  active: true, userId:user._id.toString() })
             forgetpass.save()
+            let id = forgetpass._id.toString()
+            // return res.json({ id:forgetpass._id.toString(), message: 'success forgrtpass req', sucess: true })
 
-            return res.json({ id:forgetpass._id.toString(), message: 'success forgrtpass req', sucess: true })
-            
-            // const apiKey = client.authentications['api-key']
-            // apiKey.apiKey = process.env.API_KEY
-
-            // const  tranEmailApi = new Sib.TransactionalEmailsApi()
-
-            // const sender = {
-            //     email : 'satishdpanchal786@gmail.com'
-            // }
-            // const receivers = {
-            //     email : 'satishdpanchal786@gmail.com'
-            // }
+            const client = sib.ApiClient.instance
+            const apiKey = client.authentications['api-key']
+            apiKey.apiKey = process.env.API_KEY
         
-            // response = await tranEmailApi.sendTransacEmail({
-            //     sender,
-            //     to:receivers,
-            //     subject:'this mail is for your password change request',
-            //     textContent :`this mail is for your password change request ,http://localhost:3000/password/resetpassword`
-            // })
-  
-            // .catch((error) => {
-            //     console.log(error)
-            //     throw new Error(error);
-            // })
-            //send mail
+            const tranEmailApi = new sib.TransactionalEmailsApi()
+            
+            const sender = {
+                email : 'satishdpanchal786@gmail.com',
+                name : 'satish'
+            }
+            
+            const recievers = [
+                {
+                    email : email,
+                },
+            ]
+        
+            tranEmailApi.sendTransacEmail({
+                sender,
+                to: recievers,
+                subject: 'forgotpass please reset',
+                textContent: `Follow the link and reset password`,
+                htmlContent: `Click on the link below to reset password <br> <a href="http://localhost:3000/password/resetpassword/${id}">Reset password</a>`,
+            })
+
+            return res.status(202).json({ message: "mail sent succesfully", sucess: true });
+            
+
         }else {
             throw new Error('User doesnt exist')
         }
     } catch(err){
         console.error(err)
-        return res.json({ message: err, sucess: false });
+        return res.status(500).json({ message: err, sucess: false });
     }
 }
 
